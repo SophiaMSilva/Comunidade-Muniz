@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Muniz Auto Center – Comunidade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #d10000;
+      --red-dark: #a00000;
+      --yellow: #f5c518;
+      --black: #0d0d0d;
+      --white: #ffffff;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Barlow', sans-serif;
+      background: var(--black);
+      overflow: hidden;
+    }
+
+    /* ── background ── */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: var(--black);
+    }
+
+    /* big diagonal red sweep */
+    .bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, var(--black) 45%, var(--red) 45%);
+    }
+
+    /* subtle noise grain */
+    .bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* ── layout ── */
+    .stage {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 2rem;
+    }
+
+    /* ── monitor card ── */
+    .monitor-wrap {
+      position: relative;
+      opacity: 0;
+      transform: translateY(32px);
+      animation: rise 0.7s cubic-bezier(.22,1,.36,1) 0.1s forwards;
+    }
+
+    .monitor {
+      width: min(420px, 88vw);
+      background: #1a1a1a;
+      border-radius: 18px 18px 6px 6px;
+      border: 3px solid #2e2e2e;
+      box-shadow:
+        0 0 0 1px #111,
+        0 24px 60px rgba(0,0,0,0.7),
+        0 4px 12px rgba(209,0,0,0.25);
+      overflow: hidden;
+    }
+
+    /* monitor top bar */
+    .monitor__bar {
+      height: 28px;
+      background: #222;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 12px;
+      border-bottom: 2px solid #111;
+    }
+
+    .dot {
+      width: 11px; height: 11px;
+      border-radius: 50%;
+    }
+    .dot--r { background: #ff5f57; }
+    .dot--y { background: #febc2e; }
+    .dot--g { background: #28c840; }
+
+    /* monitor screen */
+    .monitor__screen {
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.4rem 2rem;
+    }
+
+    .logo-img {
+      width: 100%;
+      max-width: 280px;
+      height: auto;
+      display: block;
+    }
+
+    /* monitor stand */
+    .stand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stand__neck {
+      width: 28px;
+      height: 26px;
+      background: linear-gradient(to bottom, #3a3a3a, #222);
+    }
+
+    .stand__base {
+      width: 110px;
+      height: 10px;
+      background: linear-gradient(to bottom, #3a3a3a, #1e1e1e);
+      border-radius: 0 0 8px 8px;
+    }
+
+    /* ── whatsapp bubble icon ── */
+    .wa-bubble {
+      position: absolute;
+      top: -22px;
+      left: -22px;
+      width: 58px;
+      height: 58px;
+      background: #25d366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 18px rgba(37,211,102,0.5);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    .wa-bubble svg { width: 32px; height: 32px; fill: white; }
+
+    /* ── button ── */
+    .btn-wrap {
+      margin-top: 2.2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: rise 0.6s cubic-bezier(.22,1,.36,1) 0.5s forwards;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--black);
+      color: var(--yellow);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.15rem, 4vw, 1.4rem);
+      letter-spacing: 0.12em;
+      padding: 0.85rem 2.8rem;
+      border-radius: 100px;
+      text-decoration: none;
+      border: 2px solid #2a2a2a;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .btn:hover {
+      background: #1a1a1a;
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.6), 0 0 0 2px var(--yellow);
+    }
+
+    .btn:active { transform: translateY(0) scale(0.98); }
+
+    .btn svg { width: 22px; height: 22px; fill: #25d366; flex-shrink: 0; }
+
+    /* ── tagline ── */
+    .tagline {
+      margin-top: 1.1rem;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: rise 0.5s ease 0.75s forwards;
+    }
+
+    /* ── red speed lines decoration ── */
+    .lines {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 6px;
+      display: flex;
+      gap: 4px;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .lines span {
+      display: block;
+      height: 100%;
+      flex: 1;
+      background: var(--red);
+      opacity: 0.6;
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: sweep 0.8s cubic-bezier(.22,1,.36,1) calc(var(--i)*0.06s + 0.3s) forwards;
+    }
+
+    /* ── animations ── */
+    @keyframes rise {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 4px 18px rgba(37,211,102,0.4); transform: scale(1); }
+      50%       { box-shadow: 0 4px 28px rgba(37,211,102,0.7); transform: scale(1.07); }
+    }
+
+    @keyframes sweep {
+      to { transform: scaleX(1); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg"></div>
+
+<!-- speed line decoration -->
+<div class="lines" aria-hidden="true">
+  <span style="--i:0"></span>
+  <span style="--i:1"></span>
+  <span style="--i:2"></span>
+  <span style="--i:3"></span>
+  <span style="--i:4"></span>
+  <span style="--i:5"></span>
+  <span style="--i:6"></span>
+  <span style="--i:7"></span>
+</div>
+
+<main class="stage">
+
+  <div class="monitor-wrap">
+
+    <!-- WhatsApp floating bubble -->
+    <div class="wa-bubble" aria-hidden="true">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+      </svg>
+    </div>
+
+    <!-- Monitor -->
+    <div class="monitor">
+      <div class="monitor__bar">
+        <span class="dot dot--r"></span>
+        <span class="dot dot--y"></span>
+        <span class="dot dot--g"></span>
+      </div>
+      <div class="monitor__screen">
+        <!--
+          LOGO: substitua o src abaixo pelo caminho da sua logo.
+          Ex.: src="logo.png"
+        -->
+        <img
+          class="logo-img"
+          src="logo.png.png"
+          alt="Muniz Auto Center"
+          onerror="this.outerHTML='<div style=\'font-family:Bebas Neue,sans-serif;font-size:2.2rem;color:#d10000;letter-spacing:0.06em;text-align:center\'>MUNIZ<br><span style=\'font-size:1rem;color:#444;letter-spacing:0.2em\'>AUTO CENTER</span></div>'"
+        />
+      </div>
+    </div>
+
+    <!-- Stand -->
+    <div class="stand">
+      <div class="stand__neck"></div>
+      <div class="stand__base"></div>
+    </div>
+
+  </div>
+
+  <!-- CTA Button -->
+  <div class="btn-wrap">
+    <a
+      class="btn"
+      href="https://chat.whatsapp.com/EddW5MxIbYMHqG9ddziyU7?mode=hqctswi"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+      </svg>
+      Entrar na Comunidade
+    </a>
+  </div>
+
+  <p class="tagline">Muniz Auto Center &nbsp;·&nbsp; Comunidade Oficial</p>
+
+</main>
+
+</body>
+</html>
